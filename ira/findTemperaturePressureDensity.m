@@ -25,9 +25,10 @@ function [temperature_K, pressure_Pa, density_kgpm3] = ...
 %       a geometric altitude of 25 km AMSL in the variables T, p, and rho
 %       respectively.
 % 
-%       [~, p, ~] = findTemperaturePressureDensity([2:6:50])
+%       [~, p, ~] = findTemperaturePressureDensity(2:6:50)
 %       returns the pressures alone at every 6 km interval from 2 to 50 km
-%       AMSL in the variable p.
+%       AMSL in the variable p. When the input is a vector, the output is
+%       of the same shape, i.e. p is a row vector here.
 % 
 %       [~, p, rho] = findTemperaturePressureDensity([20:30;50:60])
 %       returns the pressures and  densities at every 1 km interval from 20
@@ -35,13 +36,23 @@ function [temperature_K, pressure_Pa, density_kgpm3] = ...
 %       Here, size(p) = [2 11], same as size(rho), and equal to size of the
 %       input matrix.
 % 
+%       [T, ~, ~] = findTemperaturePressureDensity(randi(80,40,20,10));
+%       returns the temperatures at the altitudes specified by the
+%       40-by-20-by-10 input matrix, (which contains pseudorandom integers
+%       drawn from the discrete uniform distribution on the interval
+%       [1,80]) in the variable T.
+% 
 %   See also makeIra, plotIraCharts.
 
 %   Copyright 2021 Athrey Ranjith Krishnanunni
 
-if any(~isreal(thisGeometricHeight_km)) || ...
-                                    any(~isnumeric(thisGeometricHeight_km))
+if any(~isreal(thisGeometricHeight_km),'all') || ...
+                              any(~isnumeric(thisGeometricHeight_km),'all')
     warning('The input contains elements that are not real numbers.')
+end
+
+if any(~isfinite(thisGeometricHeight_km),'all')
+    warning('The input likely contains elements that are NaN or Inf.')
 end
 
 load('IndianReferenceAtmosphere_Sasi1994.mat','IRA','CONST_RADIUS_OF_EARTH_m')
@@ -50,6 +61,11 @@ if any(thisGeometricHeight_km < IRA.hG_km(1),'all') || ...
                          any(thisGeometricHeight_km > IRA.hG_km(end),'all')
     warning('The input contains heights outside the range of recorded data.')
 end
+
+temperature_K = zeros(size(thisGeometricHeight_km));
+pressure_Pa = zeros(size(thisGeometricHeight_km));
+density_kgpm3 = zeros(size(thisGeometricHeight_km));
+% setting shape of output variables to be same as that of input
 
 queryHeight_m = thisGeometricHeight_km * 1000 * CONST_RADIUS_OF_EARTH_m ./ ...
                (thisGeometricHeight_km * 1000 + CONST_RADIUS_OF_EARTH_m);
@@ -82,13 +98,13 @@ idx{end} = 1;
 % idx{:} will now produce the CONTENT inside all the cells, so that
 % queryResult(idx{:}) will access all its innermost dimensions, with the
 % outermost dimension set to 1.
-temperature_K = queryResult(idx{:});
+temperature_K(:) = queryResult(idx{:});
 
 idx{end} = 2;
-pressure_Pa = queryResult(idx{:});
+pressure_Pa(:) = queryResult(idx{:});
 % pressure is stored along 2nd index of outermost dimension of queryResult
 
 idx{end} = 3;
-density_kgpm3 = queryResult(idx{:});
+density_kgpm3(:) = queryResult(idx{:});
 
 end
