@@ -38,7 +38,7 @@
 nFigs = 4;
 maxNPlots = IRA.nRegions + 1; % max number of plots in any of the figures
 
-figNameArray = cell(1,nFigs);
+figNameArray = cell(1,nFigs); % name with which the figures will be saved
 
 if verLessThan('matlab','8.1')
     if exist('figHandleArray','var'), clear figHandleArray, end
@@ -52,12 +52,12 @@ end
 %
 hGh_T = 1; % figure number for hG, h vs. T
 figNameArray{hGh_T} = 'hG,h vs T';
-figHandleArray(hGh_T) = figure;
+figHandleArray(hGh_T) = figure('Visible','off');
 
 if verLessThan('matlab','9.0')
     
     [axesHandleArray, plotHandleArray(1,hGh_T), plotHandleArray(2,hGh_T)]...
-                       = plotyy(IRA.T_K, IRA.h_m/1000, IRA.T_K, IRA.hG_km);
+               = plotyy(IRA.T_K, IRA.h_m/1000, IRA.T_K, IRA.hG_km); %#ok<PLOTYY>
     ylabel(axesHandleArray(1), 'Geopotential Altitude h (km)')
     ylabel(axesHandleArray(2), 'Geometric Altitude h_G (km)')
 
@@ -84,16 +84,20 @@ set(axesHandleArray,'FontSize',16)
 title('Altitude - Temperature Data for Indian Reference Atmosphere')
 xlabel('Temperature T (K)')
 grid on
+set(figHandleArray(hGh_T),'Visible','on')
 %}
 %% 2. Geopotential altitude vs. temperature - data and best fit lines
 %
 hDataFit_T = 2; % figure number for h, best fit data vs. T
 figNameArray{hDataFit_T} = 'h vs T';
-figHandleArray(hDataFit_T) = figure;
+figHandleArray(hDataFit_T) = figure('Visible','off');
 
 % plot recorded data points first, so that fit lines are displayed over it
 plotHandleArray(end,hDataFit_T) = plot(IRA.T_K,IRA.h_m/1000,'o',...
                                        'MarkerSize',10,'LineWidth',1);
+% the handle to that plot is saved as the last element in the array so as
+% to not interfere with the indices in the following loop
+
 hold on
 
 iGradientRegion = 1;
@@ -118,9 +122,9 @@ for thisRegion = 1 : IRA.nRegions
     
     else
         yHeight_m = IRA.h_m(iThisRegion);
-        lengthThisRegion = length(yHeight_m);
+        nPointsThisRegion = numel(yHeight_m);
         xTemperature_K = IRA.temperatureVal_K(iIsothermalRegion) * ...
-                         ones(lengthThisRegion,1);
+                         ones(nPointsThisRegion,1);
         iIsothermalRegion = iIsothermalRegion + 1;
     end
                
@@ -136,18 +140,20 @@ xlabel('Temperature T (K)')
 ylabel('Geopotential Altitude h (km)')
 grid on
 set(gca,'FontSize',16)
+set(figHandleArray(hDataFit_T),'Visible','on')
 %}
 %% 3. Geopotential altitude vs. pressure
 %
 h_p = 3; % figure number for h vs. P
 figNameArray{h_p} = 'h vs p';
-figHandleArray(h_p) = figure;
+figHandleArray(h_p) = figure('Visible','off');
 plotHandleArray(1,h_p) = semilogx(IRA.p_Pa/1000,IRA.h_m/1000,'LineWidth',2);
 title('Indian Reference Atmosphere - Pressure chart')
 xlabel('Pressure p (kPa)')
 ylabel('Geopotential Altitude h (km)')
 grid on
 set(gca,'FontSize',16)
+set(figHandleArray(h_p),'Visible','on')
 %}
 %% 4. Geopotential altitude vs. density
 %
@@ -160,6 +166,7 @@ xlabel('Density \rho (kg/m^3)')
 ylabel('Geopotential Altitude h (km)')
 grid on
 set(gca,'FontSize',16)
+set(figHandleArray(h_rho),'Visible','on')
 %}
 %% Save figures
 % remove the { in the line below to the save the figures to file
