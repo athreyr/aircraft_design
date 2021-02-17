@@ -46,6 +46,7 @@ weightFractions = [ 0.16;           0.19;           0.06];
 %
 cruisingAltitude_km = 15;
 loiteringAltitude_km = 15;
+
 % check if \ira\ is on the MATLAB path
 try
     [~,~,rhoCruise_kgpm3] = findTemperaturePressureDensity(cruisingAltitude_km);
@@ -58,6 +59,7 @@ catch ME
     end
     throw(ME)
 end
+
 [~,~,rhoLoiter_kgpm3] = findTemperaturePressureDensity(loiteringAltitude_km);
 %}
 %% Calculate takeoff weight and wing area
