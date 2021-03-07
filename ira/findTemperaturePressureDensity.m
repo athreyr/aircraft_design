@@ -90,8 +90,8 @@ queryResult = interp1(IRA.h_m,[IRA.T_K, IRA.p_Pa, IRA.rho_kgpm3],queryHeight_m);
 % -accessing-certain-dimension-of-multidimensional-array#answer_60965')">
 % "Accessing certain dimension of multi-dimensional array"</a>
 
-idx = repmat({':'},[1 ndims(queryResult)]);
-% idx = {':'} {':'} ... {':'}, length(idx)= number of dimensions of queryResult
+idx = cell(1,ndims(queryResult)); % number of dimensions of queryResult
+idx(:) = {':'}; % idx = {':'} {':'} ... {':'}
 
 idx{end} = 1;
 % replaces content of last cell with [1], i.e. idx = {':'} ... {':'} {[1]}

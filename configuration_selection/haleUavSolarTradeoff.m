@@ -148,7 +148,7 @@ Cl = zeros([nonSingletonSize(altitudeCruise_km), nonSingletonSize(Vcruise_mps)])
 % this way.
 
 % Now, since the dimensions of Cl constructed like this will be arbitrary,
-% neither vectorization nor implicit expansion is not possible (because it
+% neither vectorization nor implicit expansion is possible (because it
 % requires "arrays of compatible sizes", which in the general case,
 % altitudeCruise_km and Vcruise_mps will not be).
 
@@ -184,7 +184,10 @@ end
 end
 
 function szout = nonSingletonSize(argin)
-%Returns number of elements if input is a vector, and size ouputs otherwise
-    if isvector(argin), szout = numel(argin); return, end
-    szout = size(argin);
+%Returns number of elements if input is a vector, and size outputs otherwise
+
+if isvector(argin), szout = numel(argin); return, end
+
+szout = size(argin);
+
 end
