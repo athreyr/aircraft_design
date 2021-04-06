@@ -22,8 +22,9 @@ classdef AtmosphericModel
     end
     
     methods
+        
+        % constructor has to be in the same m-file as that of class
         function ThisAtmosphericModel = AtmosphericModel(varargin)
-            %hG,hGUnit,T,TUnit,p,pUnit,rho,rhoUnit,unitconversion)
             UserInputs = AtmosphericModel.unpackInputs(varargin);
             Props = AtmosphericModel.computeProperties(UserInputs);
             
@@ -59,23 +60,22 @@ classdef AtmosphericModel
             %}
         end
         
-        h = altitudeGeopotential(altitudeGeometric,varargin);
-        T = temperature(altitudeGeometric,varargin);
-        p = pressure(altitudeGeometric,varargin);
-        rho = density(altitudeGeometric,varargin);
-        valOut = convertUnit(valIn,fromUnit);
-        ThisAtmosphericModel = modify(propertyName,newVal);
+        h = altitudeGeopotential(altitudeGeometric, varargin);
+        T = temperature(altitudeGeometric, varargin);
+        p = pressure(altitudeGeometric, varargin);
+        rho = density(altitudeGeometric, varargin);
+        valOut = convertUnit(valIn, fromUnit);
+        ThisAtmosphericModel = modify(propertyName, newVal);
         
     end
     
-    %{
-    methods (Access = protected)
-        h = geopotentialAltitude(geometricAltitude, RADIUS_OF_EARTH);
+    methods (Access = protected, Hidden)
+        queryResult = lookup(queriedPropertyName,altitudeGeometric,varargin);
     end
-    %}
+    
     methods (Static, Hidden)
         UserInputs = unpackInputs(varargin);
-        Props = computeProps(UserInputs);
+        Props = computeProperties(UserInputs);
     end
 end
 
