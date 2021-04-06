@@ -1,0 +1,8 @@
+referenceArea	1 % any positive number
+aspectRatio	1 % any positive number
+taperRatio	1 % number between 0 and 1
+sweepAngle_deg	0 % number between -180 and 180
+sweepLocation	0 % number between 0 and 1
+
+% default values have no error checking, so be careful when changing this
+% ideally, AR = b^2 / S and cRoot = 2 * S / b (1 + TR) should be satisfied
