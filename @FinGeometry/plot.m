@@ -1,64 +1,69 @@
-function plotHandle = plot(ThisWing,varargin)
+function varargout = plot(ThisFinGeometry, varargin)
+% plot overloads the builtin plot function for ThisFinGeometry class
+% 
+%   Depending on the number of outputs in the function call, it exhibits
+%   different behaviour as follows:
+%
+%   ThisFinGeometry.plot() draws the planform of the fin in the current
+%   axes and returns no output.
+% 
+%   h = ThisFinGeometry.plot() returns the handle to the plot in h.
+% 
+%   [x, y] = ThisFinGeometry.plot() returns the abcissas and ordinates of
+%   the corners of the fin planform in x and y respectively. The order of
+%   the coordinates are such that plot(x, y) creates a closed figure.
+%   This syntax does not generate a plot.
+% 
+%   The input arguments to this function are same as that of the builtin
+%   plot() function, including target axes and Name-Value pairs.
 
-% p = inputParser;
-% addParameter(p,'Origin',[0,0])
-% parse(p,varargin{:})
-% origin = p.Results.Origin;
+nargoutchk(0,2) % according to function output signatures
 
-axesHandle = gobjects(1);
-if nargin > 2 && isa(varargin{1},'matlab.graphics.axis.Axes')
-    axesHandle = varargin{1};
-    plotoptions = varargin(2:end);
-else
-    plotoptions = varargin;
+% input argument checking will be done inside the builtin plot function and
+% exceptions (if any) will be thrown as though they come from this function
+
+origin = [-ThisFinGeometry.rootChord * ThisFinGeometry.sweepLocation, 0];
+datapoints = ThisFinGeometry.planformCoordinates(origin);
+if nargout == 2 % basically becomes a wrapper for planformCoordinates
+    varargout = {datapoints(:,1), datapoints(:,2)};
+    return
 end
 
-AR = ThisWing.aspectRatio;
-b = ThisWing.fullspan;
-TR = ThisWing.taperRatio;
-lambda_deg = ThisWing.sweepAngle_deg;
-xBar = ThisWing.sweepLocation;
-cRoot = ThisWing.rootChord;
-
-origin = [-cRoot * xBar, 0];
-rootLE = [0, 0] - origin;
-rootTE = [-cRoot, 0] - origin;
-
-lambdaLE_deg = atand( tand(lambda_deg) + 4/AR * (1-TR)/(1+TR) * xBar );
-rightTipLE = [-b/2 * tand(lambdaLE_deg), b/2] - origin;
-leftTipLE  = [-b/2 * tand(lambdaLE_deg), -b/2] - origin;
-
-lambdaTE_deg = atand( tand(lambdaLE_deg) - 4/AR * (1-TR)/(1+TR) );
-rightTipTE = [-cRoot - b/2 * tand(lambdaTE_deg), b/2] - origin;
-% if you write -cRoot -b/2*..., it reads it as -cRoot, -b/2*...
-leftTipTE  = [-cRoot - b/2 * tand(lambdaTE_deg), -b/2] - origin;
-
-data = [rootLE; rightTipLE; rightTipTE; rootTE; leftTipTE; leftTipLE; rootLE];
-
-if isempty(plotoptions)
-    plotHandle = plot(data(:,1), data(:,2));
-    axesHandle = gca;
+% parse inputs
+plotoptions = {};
+if isempty(varargin) % inputs don't contain target axes
+    axesHandle = gca; % creates new axes if it doesn't exist
 else
-    if isgraphics(axesHandle)
-        plotHandle = plot(axesHandle,data(:,1),data(:,2),plotoptions);
+    if isa(varargin{1}, 'matlab.graphics.axis.Axes')
+    % ---------------- REVISIT FOR BACKWARD COMPATIBILITY ----------- !!!!
+        axesHandle = varargin{1};
+        plotoptions = varargin(2:end);
     else
-        plotHandle = plot(data(:,1),data(:,2),plotoptions);
         axesHandle = gca;
-    end   
+        plotoptions = varargin;
+    end
 end
-axis equal
-grid on
-set(axesHandle,'XAxisLocation','origin')
-set(axesHandle,'YAxisLocation','origin')
-set(axesHandle,'YDir','reverse')
-xlabel('X_B')
-fooHandle = ylabel('Y_B');
-fooPos = fooHandle.Position;
+
+try
+    plotHandle = builtin('plot', axesHandle, ...
+                         datapoints(:,1), datapoints(:,2), plotoptions{:});
+catch ME
+    throwAsCaller(ME)
+end
+
+% modify plot for aesthetic reasons
+axis(axesHandle, 'equal') % so that fin doesn't look distorted
+grid(axesHandle, 'on') % personal taste
+set(axesHandle, 'XAxisLocation', 'origin') % to capture the symmetry
+set(axesHandle, 'YAxisLocation', 'origin') % properly
+set(axesHandle, 'YDir', 'reverse') % body axes sign convention
+xlabel('X_B') % subscript for Body
+fooHandle = ylabel('Y_B'); % requires more modifications for consistency
+fooPos = get(fooHandle, 'Position');
 fooPos(2) = -fooPos(2);
-fooHandle.Position = fooPos;
-fooHandle.VerticalAlignment = 'bottom';
-% fooPos(1) = -fooPos(1);
-% fooHandle.Position = fooPos;
-% fooHandle.HorizontalAlignment = 'left';
+set(fooHandle, 'Position',fooPos, 'VerticalAlignment','bottom');
+
+if nargout == 1, varargout = plotHandle; return, end
+varargout = {}; % so that ans isn't created when calling with no outputs
 
 end
