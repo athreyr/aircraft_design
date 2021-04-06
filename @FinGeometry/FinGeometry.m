@@ -1,74 +1,62 @@
 classdef FinGeometry
-    %WING Summary of this class goes here
-    %   Detailed explanation goes here
+    % FinGeometry is a template for reference wing, tail geometry, etc.
+    %
+    %   It doesn't contain any aerodynamic characteristics, just planar
+    %   geometry like reference area, chordlengths, sweep angle, etc.
     
-    properties (SetAccess = protected)
-        referenceArea
-        aspectRatio
-        fullspan
-        taperRatio
-        rootChord
+    properties (SetAccess = private)        
+        referenceArea % S [L^2] (user input)
+        aspectRatio % AR = b^2 / S [-] (user input)
+        taperRatio % TR = cRoot / cTip [-] (user input)        
+        fullspan % b = sqrt(S * AR) [L] (computed)
+        rootChord % cRoot = 2 * S / (b * (1 + TR)) [L] (computed)
     end
     
-    properties
-        sweepAngle_deg
-        sweepLocation
+    properties % public because these are only used for plot()
+        sweepAngle_deg % Lambda [-] (user input)
+        sweepLocation % xBar = x/c : del_Lambda(xBar)/del_y = 0 [-] (user input)
     end
     
-    methods
-        function ThisFinGeometry = FinGeometry(S,AR,varargin)
-            %WING Construct an instance of this class
-            %   Detailed explanation goes here                 
-            narginchk(2,5)
-            switch nargin
-                case 2
-                    TR = 1;
-                    lambda = 0;
-                    lambdaRelPos = 0;
-                case 3
-                    TR = deal(varargin{:});
-                    lambda = 0;
-                    lambdaRelPos = 0.25;
-                case 4
-                    [TR,lambda] = deal(varargin{:});
-                    lambdaRelPos = 0.25;
-                case 5
-                    [TR,lambda,lambdaRelPos] = deal(varargin{:});
-                otherwise
-                    % do nothing
-%                     if nargin < 2, error(message('MATLAB:minrhs')), end
-%                     if nargin > 5, error(message('MATLAB:TooManyInputs')), end
-            end % switch number of inputs
+    methods % public
+        
+        % constructor should be in the same m-file as that of class
+        function ThisFinGeometry = FinGeometry(S, AR, varargin)
+            % The constructor can be called the following ways:
+            % ThisFinGeometry = FinGeometry(S, AR)
+            % ThisFinGeometry = FinGeometry(S, AR, TR)
+            % ThisFinGeometry = FinGeometry(S, AR, TR, lambda)
+            % ThisFinGeometry = FinGeometry(S, AR, TR, lambda, lambdaRelPos)
             
-            if TR < 0 || TR > 1
-                warning(['Taper ratio is unconventional. Results may be '...
-                         'infeasible.'])
+            % construct default object whose properties will be overriden
+            [propertiesList, defaultValues] = defaultObject('FinGeometry');
+            for idx = 1:numel(propertiesList)
+                ThisFinGeometry.(propertiesList{idx}) = defaultValues(idx);
             end
             
-            % compute entire geometry from inputs
-            b = sqrt(S * AR);
-            cRoot = 2 * S / (b * (1 + TR));
+            if nargin == 0, return, end
+            % constructor should work with no input arguments
             
-            ThisFinGeometry.referenceArea = S;
-            ThisFinGeometry.aspectRatio = AR;
-            ThisFinGeometry.fullspan = b;
-            ThisFinGeometry.taperRatio = TR;
-            ThisFinGeometry.rootChord = cRoot;
-            ThisFinGeometry.sweepAngle_deg = lambda;
-            ThisFinGeometry.sweepLocation = lambdaRelPos;
-        end
-        %{
-        function ThisFinGeometry = set.referenceArea(ThisFinGeometry,S)
-            ThisFinGeometry.referenceArea = S;
-            ThisFinGeometry.aspectRatio = AR;
-            ThisFinGeometry.fullspan = b;
-            ThisFinGeometry.taperRatio = TR;
-            ThisFinGeometry.rootChord = cRoot;
-        end
-        %}
-        chordVal = chord(ThisWing,y);
-        disp(ThisWing);
-        h = plot(ThisWing,varargin);
+            narginchk(2,5) % according to the multiple function signatures
+            
+            % modify the default object from inputs
+            ThisFinGeometry = ...
+                    ThisFinGeometry.setInputProperties(S, AR, varargin{:});
+            
+            % compute the remaining properties from inputs
+            ThisFinGeometry = ThisFinGeometry.setComputedProperties;
+            
+        end % constructor
+        
+        % include the function signatures of the other methods
+        chordlength = chord(ThisFinGeometry, y);
+        disp(ThisFinGeometry)
+        h = plot(ThisFinGeometry, varargin);
+        
+    end % public methods
+    
+    methods (Access = private, Hidden) % helper functions not meant for user
+        ThisFinGeometry = setInputProperties(ThisFinGeometry, S, AR, varargin);
+        ThisFinGeometry = setComputedProperties(ThisFinGeometry);
     end
-end
-
+    
+end % class definition
