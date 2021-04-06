@@ -1,27 +1,13 @@
-function inputValues = parseInputs(defaultVals, S, AR, varargin)
-% setInputProperties parses, validates, and sets specific object properties 
+function inputValues = parseInputs(S, AR, defaultValues, varargin)
+% parseInputs parses and validates user inputs that contain optional inputs
 % 
-%   This is a helper function for the class constructor. It's a non-static
-%   method because it requires access to the object being constructed.
+%   Helper function for class constructor.
 % 
 %   Meant for internal use only.
 
-% parse those inputs
-TR = defaultVals(1);
-lambda = defaultVals(2);
-lambdaRelPos = defaultVals(3);
-switch numel(varargin)
-    case 1
-        TR = varargin;
-    case 2
-        [TR, lambda] = deal(varargin{:});
-    case 3
-        [TR, lambda, lambdaRelPos] = deal(varargin{:});
-    otherwise
-        % do nothing
-end % switch number of optional inputs
+[TR, lambda, lambdaRelPos] = setOptionalInputs(defaultValues, varargin{:});
 
-% validate the inputs
+% validate user inputs
 try
     inputValues = [S, AR, TR, lambda, lambdaRelPos]; % may throw horzcat error 
     validateattributes(inputValues, {'numeric'}, {'real', 'finite', 'vector'})
@@ -43,22 +29,11 @@ if TR < 0 || TR > 1
             TR)
 end
 
-if sweepAngle_deg < -180 || sweepAngle_deg > 180
+if lambda < -180 || lambda > 180
     warning('FinGeometry:sweepAngle_deg:outOfBounds',...
             'Sweep angle (%3.1f deg) is not between -180 deg and 180 deg.',...
             sweepAngle_deg)
 end
-
-%{
-% assign values of specific properties corresponding to inputs
-inputProperties = defaultObject('FinGeometry');
-for argIdx = 1:numel(argin)
-    if ~isempty(argin(argIdx))
-        ThisFinGeometry.(inputProperties{argIdx}) = argin(argIdx);
-    end
-end
-%}
-
 
 end
 

@@ -1,5 +1,5 @@
 function ThisFinGeometry = setComputedProperties(ThisFinGeometry)
-%setComputedProperties sets object properties that don't come from inputs
+% setComputedProperties sets object properties that don't come from inputs
 % 
 %   Helper function for class constructor (non-static hidden method).
 % 
