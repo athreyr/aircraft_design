@@ -1,5 +1,5 @@
 function varargout = plot(ThisFinGeometry, varargin)
-% plot overloads the builtin plot function for ThisFinGeometry class
+% plot overloads the builtin plot function for FinGeometry class
 % 
 %   Depending on the number of outputs in the function call, it exhibits
 %   different behaviour as follows:
@@ -29,27 +29,8 @@ if nargout == 2 % basically becomes a wrapper for planformCoordinates
     return
 end
 
-% parse inputs
-plotoptions = {};
-if isempty(varargin) % inputs don't contain target axes
-    axesHandle = gca; % creates new axes if it doesn't exist
-else
-    if isa(varargin{1}, 'matlab.graphics.axis.Axes')
-    % ---------------- REVISIT FOR BACKWARD COMPATIBILITY ----------- !!!!
-        axesHandle = varargin{1};
-        plotoptions = varargin(2:end);
-    else
-        axesHandle = gca;
-        plotoptions = varargin;
-    end
-end
-
-try
-    plotHandle = builtin('plot', axesHandle, ...
-                         datapoints(:,1), datapoints(:,2), plotoptions{:});
-catch ME
-    throwAsCaller(ME)
-end
+% call genericplot for parsing plot options and target axes
+[plotHandle, axesHandle] = genericplot(datapoints, varargin{:});
 
 % modify plot for aesthetic reasons
 axis(axesHandle, 'equal') % so that fin doesn't look distorted
