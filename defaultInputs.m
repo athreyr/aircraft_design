@@ -1,4 +1,4 @@
-function [propertiesList, defaultValues] = defaultInputs(classname)
+function Default = defaultInputs(classname)
 % defaultInputs returns input properties of class and their default values
 % 
 %   Used for assigning properties when no input arguments are passed to the
@@ -10,11 +10,25 @@ function [propertiesList, defaultValues] = defaultInputs(classname)
 
 parentFolder = fileparts(mfilename('fullpath'));
 fileID = fopen(fullfile(parentFolder,'input_properties_default',[classname,'.txt']));
-outcells = textscan(fileID,'%s %f', 'CommentStyle', '%');
 
-propertiesList = outcells{1};
-defaultValues = outcells{2};
-
+scannedCells = textscan(fileID, '%s %s %q', 'CommentStyle','%');
 fclose(fileID);
+
+inputsList = scannedCells{1};
+datatypes = scannedCells{2};
+valexpr = scannedCells{3};
+
+nRows = numel(inputsList);
+defaultValues = cell(nRows, 1);
+for iRow = 1:nRows
+    switch datatypes{iRow}
+        case 'num'
+            defaultValues{iRow} = str2num(valexpr{iRow}); %#ok<ST2NM>
+        otherwise
+            defaultValues{iRow} = valexpr{iRow};
+    end
+end
+
+Default = cell2struct(defaultValues, inputsList, 1);
 
 end
