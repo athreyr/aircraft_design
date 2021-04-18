@@ -1,29 +1,28 @@
-function varargout = setOptionalInputs(defaultValues, varargin)
+function varargout = setOptionalInputs(defaultValues, userInputValues)
 % setOptionalInputs replaces default values with nonempty user inputs
 % 
 %   Helper function for parsing inputs in class constructors.
+%   
+%   Both defaultValues and userInputs are cell vectors of unequal length,
+%   but their contents are in the same order, i.e. if userInputs{idx} is
+%   empty or doesn't exist, output{idx} = defaultValues{idx}, otherwise
+%   output{idx} = userInputs{idx}.
 % 
 %   Meant for internal use only.
 
 if nargout ~= numel(defaultValues)
     msgtext = ['There are %i default values, but they are being assigned'...
                ' to %i variables.'];
-    ME = MException('Internal:nargMismatch', msgtext, ...
-                    numel(defaultValues), nargout);
+    ME = MException('Internal:defaultsOutMismatch', msgtext, nDefaults, nargout);
     ME.throwAsCaller
 end
 
 % populate output with default values
-varargout = cell(size(defaultValues));
-for outIdx = 1:numel(varargout)
-    varargout{outIdx} = defaultValues(outIdx);
-end
+varargout = defaultValues;
 
 % update those outputs whose corresponding user input is not empty
-for arginIdx = 1:numel(varargin)
-    thisUserInput = varargin{arginIdx};
-    if ~isempty(thisUserInput), varargout{arginIdx} = thisUserInput; end
-end
+nonemptyIdx = ~cellfun('isempty', userInputValues);
+varargout(nonemptyIdx) = userInputValues(nonemptyIdx);
 
 end
 
