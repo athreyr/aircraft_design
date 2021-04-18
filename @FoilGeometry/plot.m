@@ -35,7 +35,7 @@ end
 [plotHandle, axesHandle] = genericplot([xnew, ynew], varargin{:});
 
 % modify plot for aesthetic reasons
-axis(axesHandle, 'equal') % so that fin doesn't look distorted
+axis(axesHandle, 'equal') % so that foil doesn't look distorted
 grid(axesHandle, 'on') % personal taste
 set(axesHandle, 'XAxisLocation', 'origin') % to look at chord
 
