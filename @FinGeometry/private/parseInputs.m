@@ -1,21 +1,32 @@
-function [inputPropertiesList, valuesList] = ...
-                        parseInputs(S, AR, defaultValues, userInputValues)
+function [inputPropertiesList, valuesList] = parseInputs(Default, userInputValues)
 % parseInputs parses and validates user inputs that contain optional inputs
 % 
 %   Helper function for class constructor.
 % 
 %   Meant for internal use only.
 
-[TR, lambda_deg, lambdaRelPos] = setOptionalInputs(defaultValues, userInputValues);
-valuesList = {S; AR; TR; lambda_deg; lambdaRelPos};
 inputPropertiesList = {'referenceArea'; ...
                        'aspectRatio'; ...
                        'taperRatio'; ...
                        'sweepAngle_deg'; ...
                        'sweepLocation'};
+valuesList = {Default.S; ...
+              Default.AR; ...
+              Default.TR; ...
+              Default.lambda_deg; ...
+              Default.lambdaRelPos};
+                   
+if isempty(userInputValues), return, end
+
+[S, AR] = deal(userInputValues{1:2});
+
+defaultValues = {Default.TR, Default.lambda_deg, Default.lambdaRelPos};
+[TR, lambda_deg, lambdaRelPos] = setOptionalInputs(defaultValues, userInputValues(3:end));
+
+valuesList = {S; AR; TR; lambda_deg; lambdaRelPos};
 
 % validate user inputs
-for argidx = 1:numel(valuesList)
+for argidx = 1:numel(valuesList) % since validation is same for all inputs
     try
         validateattributes(valuesList{argidx}, {'numeric'}, {'real', 'finite', 'scalar'})
     catch ME
