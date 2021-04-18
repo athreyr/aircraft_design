@@ -14,7 +14,7 @@ TR = ThisFinGeometry.taperRatio;
 b = sqrt(S * AR);
 cRoot = 2 * S / (b * (1 + TR));
 cBar = 2/3 * cRoot * (1 + TR + TR^2) / (1 + TR);
-yBar = b/6 * (1 + 2 * TR) / (1 + TR);
+yBar = b/6 * (1 + 2 * TR) / (1 + TR); if TR == 1, yBar = 0; end
 
 % assign the remaining properties
 ThisFinGeometry.fullspan = b;
