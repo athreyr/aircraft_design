@@ -1,0 +1,7 @@
+matfilename cell        "Examples\indian.mat"
+blah        num         "877845"
+Units.altitude  cell    "meter"
+Other.hello     cell    "'go', 'corona'" % , 'hooo'; 'bye'"
+Hi.world        num     "97763"
+Units.without   num     "5"
+Hi.here         cell    "there"
