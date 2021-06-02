@@ -8,6 +8,6 @@
 % format conversion can't handle vertical surfaces, so don't use a perfect rectangle
 % ensure that all inputs (at least their names) are present and accurate, there would be errors that won't make sense otherwise
 
-datasrc		cell	"Examples\clarky.dat"
+datasrc		char	"Examples\clarky.dat"
 nHeaderRows	num	"1"
 nLeadCols	num	"0"
