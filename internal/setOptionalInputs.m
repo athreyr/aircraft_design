@@ -13,7 +13,8 @@ function varargout = setOptionalInputs(defaultValues, userInputValues)
 if nargout ~= numel(defaultValues)
     msgtext = ['There are %i default values, but they are being assigned'...
                ' to %i variables.'];
-    ME = MException('Internal:defaultsOutMismatch', msgtext, nDefaults, nargout);
+    ME = MException('Internal:defaultsOutMismatch', ...
+        msgtext, numel(defaultValues), nargout);
     ME.throwAsCaller
 end
 
