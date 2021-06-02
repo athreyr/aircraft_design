@@ -1,34 +1,49 @@
 function Default = defaultInputs(classname)
-% defaultInputs returns input properties of class and their default values
+%defaultInputs  Struct containing default arguments for class constructor
 % 
-%   Used for assigning properties when no input arguments are passed to the
-%   class constructor. The outputs are basically read from a text file
-%   with the same name as that of the class located in a folder named
-%   input_properties_default in the same folder as that of this function.
+%   defaultInputs(classname) returns the default values of arguments for
+%   the constructor of class classname in a structure whose fieldnames are
+%   the same as the argument names.
+% 
+%   Both the fieldnames and values are read from a text file with the same
+%   name as that of the class located in folder ..\data\default_inputs.
 % 
 %   Meant for internal use only.
 
-parentFolder = fileparts(mfilename('fullpath'));
-fileID = fopen(fullfile(parentFolder,'input_properties_default',[classname,'.txt']));
+% find fullpath to the relevant text file
+parentFolderList = regexp(fileparts(mfilename('fullpath')), filesep, 'split');
+datafile = fullfile(parentFolderList{1:end-1},'data','default_inputs',[classname,'.txt']);
 
+% read formatted data from it
+fileID = fopen(datafile);
 scannedCells = textscan(fileID, '%s %s %q', 'CommentStyle','%');
 fclose(fileID);
 
-inputsList = scannedCells{1};
+% separate extracted info
+varnames = scannedCells{1};
 datatypes = scannedCells{2};
-valexpr = scannedCells{3};
+expressions = scannedCells{3};
 
-nRows = numel(inputsList);
-defaultValues = cell(nRows, 1);
+Default = struct; % initialise struct for using setfield later
+
+nRows = numel(varnames); % number of lines in the text file
+values = cell(nRows, 1);
 for iRow = 1:nRows
+    
+    % process values differently according to datatype
     switch datatypes{iRow}
         case 'num'
-            defaultValues{iRow} = str2num(valexpr{iRow}); %#ok<ST2NM>
+            values{iRow} = str2num(expressions{iRow}); %#ok<ST2NM>
+        case 'cell'
+            values{iRow} = char2cell(expressions{iRow});
         otherwise
-            defaultValues{iRow} = valexpr{iRow};
+            values{iRow} = expressions{iRow};
     end
-end
+    
+    % save values to (potentially nested) struct using setfield
+    nestedStructFields = regexp(varnames{iRow}, '\.', 'split');
+    Default = setfield(Default, nestedStructFields{:}, values{iRow});
+    
+end % loop over rows of data read from text file
 
-Default = cell2struct(defaultValues, inputsList, 1);
-
-end
+end % function
