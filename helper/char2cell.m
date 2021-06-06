@@ -10,6 +10,8 @@ function cellArray = char2cell(charVal)
 %           {'abc'}     {'defg'}    {'hijkl'}
 %           {'mnop'}    {'qr'}      {'s'}
 
+if isempty(charVal), cellArray = {''}; return, end
+
 validateattributes(charVal, {'char'}, {'row'})
 
 cellRows = regexp(charVal, ';', 'split'); % each row
