@@ -8,7 +8,7 @@ classdef Unit
 %   
 %   Example:
 %       pascal = Unit('Pa');
-%       knots = Unit('kts', {'nmi', 'h'}, [0 1 -1], 1)
+%       knots = Unit('kts', {'nmi', 'h'}, [0 1 -1 0], 1)
     
     properties (SetAccess = private)
         symbol
@@ -19,7 +19,7 @@ classdef Unit
     
     methods
         function ThisUnit = Unit(symbolin, varargin)
-        % ThisUnit = Unit(symbol, [baseUnits = '0'], [M L T = 0], [coeff = 1])
+        % ThisUnit = Unit(symbol, [baseUnits = '0'], [M L T K = 0], [coeff = 1])
             
             % get names of input properties and their default values
             Default = defaultInputs('Unit');
@@ -102,13 +102,20 @@ classdef Unit
         x = mtimes(A, B);
         x = power(A, B);
         x = mpower(A, B);
-        % disp(ThisUnit)
         
     end
     
+    methods (Hidden)
+        % disp(ThisUnit)
+        multiFact = convertBase(ThisUnit, toUnitList);
+    end
+    
     methods (Static)
-        valOut = convert(argin, fromBaseUnit, toBaseUnit);
-        UnitOut = eval(unitExpression);
+        valout = convert(valin, fromUnit, toUnit, varargin);
+    end
+    
+    methods (Static, Hidden)
+        UnitOut = evaluate(unitExpression);
     end
     
 end
