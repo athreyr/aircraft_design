@@ -1,22 +1,18 @@
-function x = rdivide(A, B)
-%RDIVIDE Summary of this function goes here
+function x = times(A, B)
+%TIMES Summary of this function goes here
 %   Detailed explanation goes here
 
 if isnumeric(A)
-    warning('AD:Unit:numberDivisionByUnit', ...
-        ['Division of ''%g'' by ''%s'' is ignored because it will '...
-         'introduce numbers into the unit symbol, which is hard ', ...
-         'to parse'], ...
-        A, B.symbol)
+    x = Unit(B.symbol, B.baseUnitSymbols, B.dimensions, B.coefficient*A);
     return
     
 elseif isnumeric(B)
-    x = Unit(A.symbol, A.baseUnitSymbols, A.dimensions, A.coefficient/B);
+    x = Unit(A.symbol, A.baseUnitSymbols, A.dimensions, A.coefficient*B);
     return
     
 else
-    symbol = [A.symbol, '/', B.symbol];
-    dims = A.dimensions - B.dimensions;
+    symbol = [A.symbol, '*', B.symbol];
+    dims = A.dimensions + B.dimensions;
     
     baseA = cell(size(dims)); % for converting from base units of B
     baseX = cell(size(dims)); % base units of nonempty dims
@@ -36,7 +32,7 @@ else
         end
     end
     
-    coeff = A.coefficient / (B.coefficient * B.convertBase(baseA));
+    coeff = A.coefficient * (B.coefficient * B.convertBase(baseA));
     x = Unit(symbol, baseX, dims, coeff);
 end
 
