@@ -12,7 +12,7 @@ baseUnits = {ThisUnit.baseUnitSymbols}.';
 % read the information from file in a particular format
 parentFolderList = regexp(fileparts(mfilename('fullpath')), filesep, 'split');
 fileID = fopen(fullfile(...
-    parentFolderList{1:end-1},'data','unit_conversion','compoundUnits.txt'));
+    parentFolderList{1:end-1},'data','unit_conversion','definitions.txt'));
 
 scannedCells = textscan(fileID, '%s %q %q %f', 'CommentStyle','%');
 fclose(fileID);
@@ -34,14 +34,23 @@ for iSym = 1:numel(symbols)
         warning('AD:Unit:noDefinition', ...
             ['No definition available for %s (yet). Please type edit ' ...
              'data/unit_conversion/definitions.txt to see list of ' ...
-             'available definitions. Setting this unit to the default' ...
+             'available definitions. Setting this unit to the default ' ...
              'value'], ...
             thisSym)
         continue
     end
     
-    ThisUnit(iSym).baseUnitSymbols = char2cell(scannedCells{2}{rowSym});
-    ThisUnit(iSym).dimensions = str2num(scannedCells{3}{rowSym}); %#ok<ST2NM>
+    reqdBaseUnits = char2cell(scannedCells{2}{rowSym});
+    % only those ones with non-zero dimension
+    
+    dims = str2num(scannedCells{3}{rowSym}); %#ok<ST2NM>
+    
+    fullBaseUnits = cell(size(dims)); % all base units
+    [fullBaseUnits{dims == 0}] = deal('');
+    [fullBaseUnits{dims ~= 0}] = deal(reqdBaseUnits{:});
+    
+    ThisUnit(iSym).baseUnitSymbols = fullBaseUnits;
+    ThisUnit(iSym).dimensions = dims;
     ThisUnit(iSym).coefficient = scannedCells{4}(rowSym);
 
 end % loop over symbols of each object in ThisUnit array
