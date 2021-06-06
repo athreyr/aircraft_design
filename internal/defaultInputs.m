@@ -27,22 +27,21 @@ expressions = scannedCells{3};
 Default = struct; % initialise struct for using setfield later
 
 nRows = numel(varnames); % number of lines in the text file
-values = cell(nRows, 1);
 for iRow = 1:nRows
     
     % process values differently according to datatype
     switch datatypes{iRow}
         case 'num'
-            values{iRow} = str2num(expressions{iRow}); %#ok<ST2NM>
+            value = str2num(expressions{iRow}); %#ok<ST2NM>
         case 'cell'
-            values{iRow} = char2cell(expressions{iRow});
+            value = char2cell(expressions{iRow});
         otherwise
-            values{iRow} = expressions{iRow};
+            value = expressions{iRow};
     end
     
     % save values to (potentially nested) struct using setfield
     nestedStructFields = regexp(varnames{iRow}, '\.', 'split');
-    Default = setfield(Default, nestedStructFields{:}, values{iRow});
+    Default = setfield(Default, nestedStructFields{:}, value);
     
 end % loop over rows of data read from text file
 
