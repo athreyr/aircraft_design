@@ -1,13 +1,25 @@
-% bleh
-% LENGTH
+% From	To	Multiplier
+% Length
 m	cm	100
 km	m	1000
 mi	km	1.609
 ft	in	12
 mi	ft	5280
-% MASS
+nmi	km	1.852
+yd	ft	3
+
+% Mass
 kg	lb	2.206
-ton	kg	1000
-quintel	kg	100
-ton	quintel	10
 kg	g	1000
+ton	kg	1000
+
+% Time
+h	min	60
+min	s	60
+
+% Absolute temperature
+K	0R	1.8
+
+% Angle
+rad	deg	57.2958
+grad	deg	0.9
