@@ -76,10 +76,10 @@ for linIdxSym = 1:numel(symbol)
         setOptionalInputs(defaultValues, userValues(subIdxSym{:},:));
     
     try
-        validateattributes(symbol{linIdxSym}, {'char','string'}, {'scalartext'})
+        validateattributes(symbol{linIdxSym}, {'char','string'}, {'nonempty','scalartext'})
         validateattributes(baseUnits, {'cell'}, {'row'})
         validateattributes([baseUnits{:}], {'char','string'}, {'scalartext'})
-        validateattributes(dims, {'numeric'}, {'size',size(baseUnits), 'finite'})
+        validateattributes(dims, {'numeric'}, {'finite'})
         validateattributes(coeff, {'numeric'}, {'vector','finite'})
         if isscalar(coeff)
             validateattributes(coeff, {'numeric'}, {'positive'})
