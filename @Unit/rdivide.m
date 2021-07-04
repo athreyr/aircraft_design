@@ -2,17 +2,14 @@ function x = rdivide(A, B)
 %RDIVIDE Summary of this function goes here
 %   Detailed explanation goes here
 
+% don't use setSymbol here, use it only in evaluate
+
 if isnumeric(A)
-    warning('AD:Unit:numberDivisionByUnit', ...
-        ['Division of ''%g'' by ''%s'' is ignored because it will '...
-         'introduce numbers into the unit symbol, which is hard ', ...
-         'to parse'], ...
-        A, B.symbol)
-    return
+    x = Unit(['1/',B.symbol], B.baseUnitSymbols, -B.dimensions, A/B.coefficient);
+    x = x.setSymbol;
     
 elseif isnumeric(B)
     x = Unit(A.symbol, A.baseUnitSymbols, A.dimensions, A.coefficient/B);
-    return
     
 else
     symbol = [A.symbol, '/', B.symbol];
@@ -37,7 +34,14 @@ else
     end
     
     coeff = A.coefficient / (B.coefficient * B.convertBase(baseA));
-    x = Unit(symbol, baseX, dims, coeff);
+    
+    if any(dims)
+        x = Unit(symbol, baseX, dims, coeff);
+        x = x.setSymbol;
+    else
+        x = coeff;
+    end
+    
 end
 
 end

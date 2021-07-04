@@ -17,7 +17,8 @@ if ~isnumeric(B)
     end
     
     x = A ^ B.coefficient;
-    return
+    
+    if isa(x, 'Unit'), x = x.setSymbol; end
     
 else
     
@@ -25,6 +26,8 @@ else
     dims = A.dimensions * B;    
     coeff = A.coefficient ^ B;
     x = Unit(symbol, A.baseUnitSymbols, dims, coeff);
+    x = x.setSymbol;
+    
 end
 
 

@@ -33,7 +33,14 @@ else
     end
     
     coeff = A.coefficient * (B.coefficient * B.convertBase(baseA));
-    x = Unit(symbol, baseX, dims, coeff);
+    
+    if any(dims)
+        x = Unit(symbol, baseX, dims, coeff);
+        x = x.setSymbol;
+    else
+        x = coeff;
+    end
+    
 end
 
 end
