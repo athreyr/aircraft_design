@@ -8,6 +8,9 @@ function varargout = setOptionalInputs(defaultValues, userInputValues)
 %   empty or doesn't exist, output{idx} = defaultValues{idx}, otherwise
 %   output{idx} = userInputs{idx}.
 % 
+%   Also, if number of user inputs are more than number of default values,
+%   the additional inputs are ignored.
+% 
 %   Meant for internal use only.
 
 if nargout ~= numel(defaultValues)
@@ -20,6 +23,9 @@ end
 
 % populate output with default values
 varargout = defaultValues;
+
+% ignore user inputs beyond number of default values (i.e. nargout)
+userInputValues(nargout+1:end) = [];
 
 % update those outputs whose corresponding user input is not empty
 nonemptyIdx = ~cellfun('isempty', userInputValues);
