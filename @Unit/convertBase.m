@@ -29,7 +29,7 @@ for idim = 1:numel(dims)
              fooVal = 1;
         end
 
-        multiFact = fooVal * multiFact ^ dims(idim);
+        multiFact = multiFact * fooVal ^ dims(idim);
     end
 end
 
