@@ -1,5 +1,4 @@
-function queryResult = lookup(ThisAtmosphericModel,queriedPropertyName,...
-                              altitudeGeometric,varargin)
+function val = lookup(ThisAtmosphericModel, propq, altitudeGeometric, varargin)
 %lookup returns value of queried property after interpolating with altitude
 % 
 %   This is a hidden method because users are just supposed to use the
@@ -12,11 +11,17 @@ function queryResult = lookup(ThisAtmosphericModel,queriedPropertyName,...
 %   Also, only one property can be looked up at a time (altitudes can be
 %   N-D arrays, though).
 
-queryAltitude =  ThisAtmosphericModel.geopotentialAltitude(altitudeGeometric);
+% narginchk(3, 4)
+dfltUnit = ThisAtmosphericModel.SaveUnits.altitude;
+unitIn = setOptionalInputs({dfltUnit}, varargin);
+
+hG = Unit.convert(altitudeGeometric, unitIn, dfltUnit);
+
+hq =  ThisAtmosphericModel.altitudeGeopotential(hG);
             
-queryResult = zeros(size(altitudeGeometric));
-queryResult(:) = interp1(ThisAtmosphericModel.Table.altitudeGeopotential, ...
-                         ThisAtmosphericModel.Table.(queriedPropertyName), ...
-                         queryAltitude);
+val = zeros(size(hG));
+val(:) = interp1(ThisAtmosphericModel.altitudesGeopotential, ...
+    ThisAtmosphericModel.(propq), hq);
+
 end
 
