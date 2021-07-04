@@ -9,6 +9,7 @@ kg		"kg"		"1, 0, 0, 0"	1
 g		"g"		"1, 0, 0, 0"	1
 lb		"lb"		"1, 0, 0, 0"	1
 ton		"ton"		"1, 0, 0, 0"	1
+lbm		"lb"		"1, 0, 0, 0"	1
 
 % Length
 m		"m"		"0, 1, 0, 0"	1
@@ -28,12 +29,17 @@ h		"h"		"0, 0, 1, 0"	1
 % Absolute temperature
 K		"K"		"0, 0, 0, 1"	1
 0R		"0R"		"0, 0, 0, 1"	1
+0C		"K"		"0, 0, 0, 1"	1
+% delta 0C, which is same as delta K
+% (proper 0C is only required during 1o1 conversion to 0F
+% which is achieved by passing a true argument to convert)
+0F		"0R"		"0, 0, 0, 1"	1
 
 % Area
 acre		"yd"		"0, 2, 0, 0"	4840
 
 % Volume
-L		"m"		"0, 3, 0, 0"	1
+L		"cm"		"0, 3, 0, 0"	1000
 oz		"in"		"0, 3, 0, 0"	1.80469
 
 % Velocity
