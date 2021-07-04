@@ -3,79 +3,77 @@ classdef AtmosphericModel
     %   Detailed explanation goes here
     
     properties (SetAccess = protected)
-        Table = struct('altitudeGeopotential',[],...
-                       'temperature',[],...
-                       'pressureStatic',[],...
-                       'density',[]);
-        RADIUS_OF_EARTH = 6356766; % m, later converted to user units
+        altitudesGeopotential
+        temperatures
+        pressuresStatic
+        densities
+        regionLimitsGeopotential
+        % isGradientRegions
+        lapseRates
+        % isothermalTemperatures
+        RADIUS_OF_EARTH
+        ACCELERATION_DUE_TO_GRAVITY
+        SPECIFIC_GAS_CONSTANT
     end
-    
+    %
     properties
         % keep units access as public because user might have forgotten
         % to include them while constructing
-        % other case of modifying it can be handled with the public modify
-        % method
-        units = struct('altitude','km',...
-                       'temperature','K',...
-                       'pressure','Pa',...
-                       'density','kg/m^3');
+        SaveUnits
+        DisplayUnits
     end
-    
+    %}
     methods
         
         % constructor has to be in the same m-file as that of class
         function ThisAtmosphericModel = AtmosphericModel(varargin)
-            UserInputs = AtmosphericModel.unpackInputs(varargin);
-            Props = AtmosphericModel.computeProperties(UserInputs);
+        % AM = AtmosphericModel(mfilename, 
             
-            ThisAtmosphericModel.Table = Props.Table;
-            ThisAtmosphericModel.units = Props.units;
-            ThisAtmosphericModel.RADIUS_OF_EARTH = ...
-                ThisAtmospheriModel.convertUnit(ThisAtmosphericModel.RADIUS_OF_EARTH, 'm');
+            % get names of input properties and their default values
+            Default = defaultInputs('AtmosphericModel');
             
-            %ATMOSPHERICMODEL Construct an instance of this class
-            %   Detailed explanation goes here
-            %{
-            
-%             ThisAtmosphericModel.make(varargin)
-%             narginchk(1,2)
-
-            switch nargin
-                case 1
-                    filename = varargin;
-%                 case 2
-%                     filename = 
-                
+            if nargin > 0 % constructor should work with no input
+                narginchk(1,5) % according to the multiple function signatures
             end
             
-            fileID = fopen(unitconversion);
-            filedata = textscan(fileID,'%s %f');
-            fclose(fileID);
-            convertFrom = cell2struct(filedata(:,2),filedata(:,1),1);
+            [inputPropertiesList, valuesList, OtherInputs] = ...
+                parseInputs(Default, varargin);
             
-            hG_m = hG * convertFrom.(hGUnit);
-            T_K = T * convertFrom.(TUnit);
-            p_Pa = p * convertFrom.(pUnit);
-            rho_kgpm3 = rho * convertFrom.(rhoUnit);
-            %}
-        end
-        
-        h = altitudeGeopotential(altitudeGeometric, varargin);
-        T = temperature(altitudeGeometric, varargin);
-        p = pressure(altitudeGeometric, varargin);
-        rho = density(altitudeGeometric, varargin);
-        valOut = convertUnit(valIn, fromUnit);
-        ThisAtmosphericModel = modify(propertyName, newVal);
-        
+            % assign input properties to object
+            for idx = 1:numel(inputPropertiesList)
+                ThisAtmosphericModel.(inputPropertiesList{idx}) = valuesList{idx};
+            end
+            
+            % compute the remaining properties from inputs
+            ThisAtmosphericModel = ...
+                ThisAtmosphericModel.setComputedProperties(OtherInputs);
+            
+        end % constructor
+                
+        h = geopotentialAltitude(ThisAtmosphericModel, altitudeGeometric, varargin);
+        % rename as geopoentialAltitude (like pressure, density altitudes)
+        T = temperature(ThisAtmosphericModel, altitudeGeometric, varargin);
+        p = pressure(ThisAtmosphericModel, altitudeGeometric, varargin);
+        rho = density(ThisAtmosphericModel, altitudeGeometric, varargin);
+%         valOut = convertUnit(valIn, fromUnit);
+%         ThisAtmosphericModel = modify(propertyName, newVal);
+        hG = densityAltitude(ThisAtmosphericModel, rho, varargin);
+        hG = pressureAltitude(ThisAtmosphericModel, p, varargin);
+        a = lapseRate(ThisAtmosphericModel, altitudeGeometric, varargin);
+        hG = geometricAltitude(ThisAtmosphericModel, h, varargin);
+
     end
     
     methods (Access = protected, Hidden)
-        queryResult = lookup(queriedPropertyName,altitudeGeometric,varargin);
+        val = lookup(ThisAtmosphericModel, propq, altitudeGeometric, varargin);
+        hG = invlookup(ThisAtmosphericModel, propname, propval, varargin);
+        % vertcat
+        % for concatenating different tables
     end
     
-    methods (Static, Hidden)
-        UserInputs = unpackInputs(varargin);
-        Props = computeProperties(UserInputs);
-    end
+%     methods (Static, Hidden)
+%         UserInputs = unpackInputs(varargin);
+%         Props = computeProperties(UserInputs);
+%     end
 end
 
