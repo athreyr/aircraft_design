@@ -102,16 +102,22 @@ classdef Unit
         x = mtimes(A, B);
         x = power(A, B);
         x = mpower(A, B);
-        
+        % tf = isequal(A, B); equal with number if dimensions are 0 are
+        % coefficient is 1, and equal with char if symbol is same, and
+        % equal with unit if base units, dimensions, and coefficients are
+        % same
     end
     
     methods (Hidden)
-        % disp(ThisUnit)
+        disp(ThisUnit)
         multiFact = convertBase(ThisUnit, toUnitList);
+        ThisUnit = setSymbol(ThisUnit);
+        ThisUnit = setComputedProperties(ThisUnit);
     end
     
     methods (Static)
         valout = convert(valin, fromUnit, toUnit, varargin);
+        % multiFact = convertBase(fromUnitList, toUnitList, dimensions);
     end
     
     methods (Static, Hidden)
