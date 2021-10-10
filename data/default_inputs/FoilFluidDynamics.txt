@@ -1,1 +1,0 @@
-stallAngle_deg
