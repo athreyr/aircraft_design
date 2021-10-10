@@ -52,4 +52,8 @@ in the Command Window. To view documentation for the class constructor instead, 
 If it is a property or method 'bar' you need to see, type:
 	doc Foo.bar
 
+The default inputs to all the class constructors are located at data\default_inputs\. You shouldn't change them unless you know what you are doing, but it might help to know where the values are coming from.
+
 I have tried to explain everything in the internal documentation, but if you need any further help, go to https://github.com/athreyr/aircraft_design, click "Issues" -> "New issue", and describe what you need help with. (You might need to create a Github account for doing that, but (1) it's free, (2) they don't spam you, and (3) it'll help you do this with every project on Github, so no need to worry.)
+
+If you are here from MATLAB File Exchange, you also need to look at data\Examples\reference_atmosphere\indian.mat, which has the Indian Reference Atmosphere object saved in it (with the name 'Ira'). You can load it and start using it directly without having to figure out how to use the class constructor.
