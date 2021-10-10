@@ -13,6 +13,8 @@ classdef AtmosphericModel
 % anyway, since you should use those help and doc commands.
 
     properties (SetAccess = protected)
+        % TODO
+        %   add property validations including class and size
         
         % In unit SaveUnits.altitude
         %

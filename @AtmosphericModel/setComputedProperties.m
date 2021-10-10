@@ -26,9 +26,9 @@ g0_R = Unit.convert( ThisAtmosphericModel.ACCELERATION_DUE_TO_GRAVITY / R, ...
 
 if isfield(OtherInputs,'hG') % [hG T], [hGUb isGrad], Ref, SaveUnits
 % object has T, so save h, hRegLim, lapseRates to it
-    h = ThisAtmosphericModel.altitudeGeopotential(OtherInputs.hG);
+    h = ThisAtmosphericModel.geopotentialAltitude(OtherInputs.hG);
     T = ThisAtmosphericModel.temperatures;
-    hRegLim = ThisAtmosphericModel.altitudeGeopotential(OtherInputs.hGRegLim);
+    hRegLim = ThisAtmosphericModel.geopotentialAltitude(OtherInputs.hGRegLim);
     isGrad = OtherInputs.isGradReg; 
     nRegs = numel(isGrad); % or numel(hRegLim) - 1
 
