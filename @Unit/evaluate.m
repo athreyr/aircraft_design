@@ -15,9 +15,9 @@ padexpr = ['(',unitExpression,')'];
 fullexpr = symbols{1};
 
 for iSym = 2:numel(symbols)
-    if isempty(symbols{iSym}) || isspace(symbols{iSym})
+    if isempty(symbols{iSym}) || all(isspace(symbols{iSym}), 'all')
         % two operators could have come one after the other, or it's a
-        % whitespace character
+        % whitespace character array (isspace also returns array, so 'all')
         str = '';
     elseif ~isnan(str2double(symbols{iSym}))
         str = symbols{iSym};
