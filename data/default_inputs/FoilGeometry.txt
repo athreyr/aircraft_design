@@ -1,0 +1,13 @@
+%abcissas	num	"1; 0.995;  0.5e-2; 0; 	0.5e-2; 	0.995;		1"
+%name		cell	"default"
+%ordinates	num	"0;	0.5e-2;	0.5e-2;	0;	-0.5e-2;	-0.5e-2;	0"
+
+%ordinates	num	"0;	0.5e-2;	0.5e-2;	0;	0;	-0.5e-2;	-0.5e-2;	0"
+%name		cell	"default"
+%abcissas	num	"0;	0.5e-2;	0.995;	1;	0;	0.5e-2;		0.995;		1"
+% format conversion can't handle vertical surfaces, so don't use a perfect rectangle
+% ensure that all inputs (at least their names) are present and accurate, there would be errors that won't make sense otherwise
+
+datasrc		char	"Examples\clarky.dat"
+nHeaderRows	num	"1"
+nLeadCols	num	"0"

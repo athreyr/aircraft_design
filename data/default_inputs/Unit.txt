@@ -1,0 +1,4 @@
+symbol		char	"1"
+baseUnits	cell	"0, 0, 0"
+dims		num	"0, 0, 0"
+coeff		num	"1"

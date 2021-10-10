@@ -1,0 +1,7 @@
+S	num	"1" % any positive number
+AR	num	"1" % any positive number
+TR	num	"1" % number between 0 and 1
+lambda_deg	num	"0" % number between -180 and 180
+lambdaRelPos	num	"0" % number between 0 and 1
+
+% default values have no error checking, so be careful when changing this
